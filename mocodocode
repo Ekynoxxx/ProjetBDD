@@ -1,0 +1,15 @@
+#code à exécuter dans MOCODO pour avoir le diagramme entité-relation. 
+EXECUTER, 0N HUMAIN, 0N ROBOT: donner_ordre
+ROBOT: id_robot, modele, nom, etat
+:
+:
+
+HUMAIN: id_humain, nom, poste, anciennete
+DF, 11 ROBOT, 0N HUMAIN: proteger
+PARTICIPER, 0N ROBOT, 0N ACTION
+:
+
+IMPLIQUER, 0N HUMAIN, 0N ACTION
+ACTION: id_action, type_action, date_debut, heure_debut, date_fin, heure_fin
+VIOLER, 0N ACTION, 11 RAPPORT_INCIDENCE : id_action , id_rapport
+RAPPORT_INCIDENCE: id_rapport, type_loi_violee, description
