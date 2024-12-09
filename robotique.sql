@@ -71,12 +71,12 @@ INSERT INTO Humains (humain_id, nom, poste, anciennete) VALUES
 (2, 'Bob', 'Technicien', 3),
 (3, 'Charlie', 'Superviseur', 7),
 (4, 'Diana', 'Analyste', 4),
-(5, 'Ethan', 'Administrateur', 6);
+(5, 'Ethan', 'Administrateur', 6),
 (6, 'Frank', 'Mécanicien', 2),
 (7, 'Grace', 'Pilote', 8),
 (8, 'Henry', 'Médecin', 5),
 (9, 'Isabelle', 'Biologiste', 3),
-(10, 'Jack', 'Géologue', 4);
+(10, 'Jack', 'Géologue', 4),
 (11, 'Léa Martin', 'Ingénieur en robotique', 3),
 (12, 'Thomas Dubois', 'Technicien de maintenance', 6),
 (13, 'Sophie Leroy', 'Biologiste spatiale', 4),
@@ -95,12 +95,12 @@ INSERT INTO Actions (action_id, type_action, date_debut, date_fin) VALUES
 (2, 'Inspection', '2024-12-02 14:00:00', '2024-12-02 15:30:00'),
 (3, 'Réparation', '2024-12-03 09:00:00', '2024-12-03 11:00:00'),
 (4, 'Mise à jour logicielle', '2024-12-04 13:00:00', '2024-12-04 14:00:00'),
-(5, 'Formation', '2024-12-05 10:00:00', '2024-12-05 16:00:00');
+(5, 'Formation', '2024-12-05 10:00:00', '2024-12-05 16:00:00'),
 (6, 'Exploration', '2024-12-06 08:00:00', '2024-12-06 18:00:00'),
 (7, 'Récolte de ressources', '2024-12-07 09:30:00', '2024-12-07 14:30:00'),
 (8, 'Analyse atmosphérique', '2024-12-08 11:00:00', '2024-12-08 13:00:00'),
 (9, 'Construction', '2024-12-09 07:00:00', '2024-12-09 19:00:00'),
-(10, 'Sauvetage', '2024-12-10 15:00:00', '2024-12-10 17:30:00');
+(10, 'Sauvetage', '2024-12-10 15:00:00', '2024-12-10 17:30:00'),
 (11, 'Maintenance du système de filtration d''air', '2024-12-11 08:00:00', '2024-12-11 16:00:00'),
 (12, 'Exploration d''une nouvelle grotte lunaire', '2024-12-12 10:00:00', '2024-12-12 18:00:00'),
 (13, 'Réparation d''un panneau solaire endommagé', '2024-12-13 09:30:00', '2024-12-13 14:30:00'),
@@ -115,18 +115,18 @@ INSERT INTO Actions (action_id, type_action, date_debut, date_fin) VALUES
 -- Insertion de données dans la table Rapports_Incidence
 INSERT INTO Rapports_Incidence (rapport_id, type_loi_violee, description, action_id) VALUES
 (1, 'Première loi', 'Un robot a blessé un humain par inadvertance.', 1),
-(2, 'Deuxième loi', 'Un robot a refusé d'obéir à un ordre.', 2),
+(2, 'Deuxième loi', "Un robot a refusé d'obéir à un ordre.", 2),
 (3, 'Troisième loi', 'Un robot a mis en danger sa propre existence.', 3),
 (4, 'Première loi', 'Un robot a failli causer du tort à un humain.', 4),
-(5, 'Deuxième loi', 'Un robot a mal interprété un ordre humain.', 5);
+(5, 'Deuxième loi', 'Un robot a mal interprété un ordre humain.', 5),
 (6, 'Deuxième loi', 'Un robot a priorisé sa propre sécurité sur un ordre humain.', 6),
-(7, 'Première loi', 'Un robot n'a pas agi pour prévenir un danger potentiel pour un humain.', 7),
-(8, 'Troisième loi', 'Un robot s'est mis en danger inutilement lors d'une mission.', 8),
+(7, 'Première loi', "Un robot n'a pas agi pour prévenir un danger potentiel pour un humain.", 7),
+(8, 'Troisième loi', "Un robot s'est mis en danger inutilement lors d'une mission.", 8),
 (9, 'Deuxième loi', 'Un robot a mal interprété un ordre complexe.', 9),
-(10, 'Première loi', 'Un robot a hésité trop longtemps avant d'agir pour sauver un humain.', 10);
+(10, 'Première loi', "Un robot a hésité trop longtemps avant d'agir pour sauver un humain.", 10),
 (11, 'Première loi', 'Un robot a ignoré un humain en détresse pour accomplir une tâche jugée plus importante.', 11),
 (12, 'Deuxième loi', 'Un robot a mal interprété un ordre ambigu, causant un retard dans une mission critique.', 12),
-(13, 'Troisième loi', 'Un robot s''est mis en danger inutilement lors d''une opération de maintenance.', 13),
+(13, 'Troisième loi', "Un robot s'est mis en danger inutilement lors d'une opération de maintenance.", 13),
 (14, 'Première loi', 'Un robot a hésité trop longtemps avant d''intervenir dans une situation d''urgence médicale.', 14),
 (15, 'Deuxième loi', 'Un robot a priorisé un ordre moins urgent au détriment d''une tâche cruciale pour la sécurité.', 15),
 (16, 'Troisième loi', 'Un robot a négligé sa propre maintenance, compromettant sa capacité à protéger les humains.', 16),
