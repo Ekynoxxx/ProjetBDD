@@ -1,4 +1,4 @@
-#code à exécuter dans MOCODO pour avoir le diagramme entité-relation. 
+#code à exécuter dans MOCODO pour avoir le diagramme entité-relation. Voir dashboard dans le wiki.
 EXECUTER, 0N HUMAIN, 0N ROBOT: donner_ordre
 ROBOT: id_robot, modele, nom, etat
 :
