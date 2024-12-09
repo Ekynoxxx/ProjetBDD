@@ -48,12 +48,12 @@ INSERT INTO Robots (robot_id, modele, nom, etat) VALUES
 (2, 'Model-Y', 'Robot2', 'en réparation'),
 (3, 'Model-Z', 'Robot3', 'décommissionné'),
 (4, 'Model-A', 'Robot4', 'actif'),
-(5, 'Model-B', 'Robot5', 'en maintenance');
+(5, 'Model-B', 'Robot5', 'en maintenance'),
 (6, 'Model-C', 'Robot6', 'actif'),
 (7, 'Model-D', 'Robot7', 'en maintenance'),
 (8, 'Model-E', 'Robot8', 'actif'),
 (9, 'Model-F', 'Robot9', 'décommissionné'),
-(10, 'Model-G', 'Robot10', 'actif');
+(10, 'Model-G', 'Robot10', 'actif'),
 (11, 'Model-H', 'Robot11', 'actif'),
 (12, 'Model-I', 'Robot12', 'en maintenance'),
 (13, 'Model-J', 'Robot13', 'actif'),
