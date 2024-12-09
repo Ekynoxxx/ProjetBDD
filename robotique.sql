@@ -135,6 +135,31 @@ INSERT INTO Rapports_Incidence (rapport_id, type_loi_violee, description, action
 (19, 'Troisième loi', 'Un robot s''est désactivé face à un danger, laissant une tâche critique inachevée.', 19),
 (20, 'Première loi', 'Un robot a causé un préjudice psychologique à un humain en révélant des informations sensibles.', 20);
 
+--Humain impliqué dans les rapports d'incidents
+SELECT h.nom, COUNT(*) AS nb_incidents
+FROM Humain h
+JOIN Participation p ON h.id_humain = p.id_humain
+JOIN Rapport_incidence r ON p.id_action = r.id_action
+GROUP BY h.nom
+ORDER BY nb_incidents DESC;
+
+
+--Robots impliqué dans les rapports d'incidents
+SELECT r.nom, COUNT(*) AS nb_incidents
+FROM Robot r
+JOIN Participation p ON r.id_robot = p.id_robot
+JOIN Rapport_incidence ri ON p.id_action = ri.id_action
+GROUP BY r.nom
+ORDER BY nb_incidents DESC;
+
+-- Action menant au plus de rapports
+SELECT a.description, COUNT(*) AS nb_incidents
+FROM Action a
+JOIN Rapport_incidence ri ON a.id_action = ri.id_action
+GROUP BY a.description
+ORDER BY nb_incidents DESC;
+
+
 -- Création des rôles
 CREATE USER administrateur;
 CREATE USER analyste;
@@ -153,3 +178,5 @@ GRANT SELECT, UPDATE (etat) ON Robots TO technicien;
 -- Attribution des droits pour le superviseur éthique
 GRANT SELECT ON Actions TO superviseur_ethique;
 GRANT SELECT ON Rapports_Incidence TO superviseur_ethique;
+
+
