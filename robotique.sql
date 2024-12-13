@@ -143,7 +143,6 @@ JOIN Rapport_incidence r ON p.id_action = r.id_action
 GROUP BY h.nom
 ORDER BY nb_incidents DESC;
 
-
 --Robots impliqué dans les rapports d'incidents
 SELECT r.nom, COUNT(*) AS nb_incidents
 FROM Robot r
@@ -158,7 +157,6 @@ FROM Action a
 JOIN Rapport_incidence ri ON a.id_action = ri.id_action
 GROUP BY a.description
 ORDER BY nb_incidents DESC;
-
 
 -- Création des rôles
 CREATE USER administrateur;
