@@ -177,4 +177,9 @@ GRANT SELECT, UPDATE (etat) ON Robots TO technicien;
 GRANT SELECT ON Actions TO superviseur_ethique;
 GRANT SELECT ON Rapports_Incidence TO superviseur_ethique;
 
-
+-- Création d'index sur les colonnes fréquemment utilisées
+CREATE INDEX idx_action_id ON Participants_Action(action_id);
+CREATE INDEX idx_robot_id ON Participants_Action(robot_id);
+CREATE INDEX idx_humain_id ON Participants_Action(humain_id);
+CREATE INDEX idx_type_loi_violee ON Rapports_Incidence(type_loi_violee);
+CREATE INDEX idx_etat ON Robots(etat);
