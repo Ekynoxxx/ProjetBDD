@@ -135,21 +135,47 @@ INSERT INTO Rapports_Incidence (rapport_id, type_loi_violee, description, action
 (19, 'Troisième loi', 'Un robot s''est désactivé face à un danger, laissant une tâche critique inachevée.', 19),
 (20, 'Première loi', 'Un robot a causé un préjudice psychologique à un humain en révélant des informations sensibles.', 20);
 
+-- Création des rôles
+CREATE USER 'administrateur'@'localhost' IDENTIFIED BY 'administrateur';
+CREATE USER 'analyste'@'localhost' IDENTIFIED BY 'analyste';
+CREATE USER 'technicien'@'localhost' IDENTIFIED BY 'technicien';
+CREATE USER 'superviseur_ethique'@'localhost' IDENTIFIED BY 'ethique';
+
+-- Attribution des droits pour l'administrateur
+GRANT ALL PRIVILEGES ON robotique TO administrateur;
+
+-- Attribution des droits pour l'analyste
+GRANT SELECT ON Robots TO analyste;
+GRANT SELECT ON Humains TO analyste;
+GRANT SELECT ON Actions TO analyste;
+GRANT SELECT ON Rapports_Incidence TO analyste;
+
+-- Attribution des droits pour le technicien
+GRANT SELECT, UPDATE (etat) ON Robots TO technicien;
+
+-- Attribution des droits pour le superviseur éthique
+GRANT SELECT ON Actions TO superviseur_ethique;
+GRANT SELECT ON Rapports_Incidence TO superviseur_ethique;
+
 -- Humains impliqués dans les rapports d'incidents
+SET profiling=1;
 SELECT h.nom, COUNT(*) AS nb_incidents
 FROM Humains h
 JOIN Participants_Action p ON h.humain_id = p.humain_id
 JOIN Rapports_Incidence r ON p.action_id = r.action_id
 GROUP BY h.nom
 ORDER BY nb_incidents DESC;
+SHOW PROFILES;
 
 -- Robots impliqués dans les rapports d'incidents
+SET profiling=1;
 SELECT r.nom, COUNT(*) AS nb_incidents
 FROM Robots r
 JOIN Participants_Action p ON r.robot_id = p.robot_id
 JOIN Rapports_Incidence ri ON p.action_id = ri.action_id
 GROUP BY r.nom
 ORDER BY nb_incidents DESC;
+SHOW PROFILES;
 
 -- Actions menant au plus de rapports
 SELECT a.type_action, COUNT(*) AS nb_incidents
@@ -173,24 +199,34 @@ JOIN Actions a ON ri.action_id = a.action_id
 GROUP BY type_loi_violee
 ORDER BY nombre_violations DESC;
 
--- Création des rôles
-CREATE USER administrateur;
-CREATE USER analyste;
-CREATE USER technicien;
-CREATE USER superviseur_ethique;
+-- Création d'index dans un premier temps
+CREATE INDEX idx_participants_action_humain_id ON Participants_Action(humain_id);
+CREATE INDEX idx_participants_action_robot_id ON Participants_Action(robot_id);
+CREATE INDEX idx_participants_action_action_id ON Participants_Action(action_id);
+CREATE INDEX idx_rapports_incidence_action_id ON Rapports_Incidence(action_id);
+CREATE INDEX idx_robots_etat ON Robots(etat);
 
--- Attribution des droits pour l'administrateur
-GRANT ALL PRIVILEGES ON robotique TO administrateur;
+-- Création de vue dans un deuxième premier temps
 
--- Attribution des droits pour l'analyste
-GRANT SELECT ON Robots TO analyste;
-GRANT SELECT ON Humains TO analyste;
-GRANT SELECT ON Actions TO analyste;
-GRANT SELECT ON Rapports_Incidence TO analyste;
+-- Vue pour les incidents par humain
+CREATE VIEW vue_incidents_par_humain AS
+SELECT h.nom, COUNT(*) AS nb_incidents
+FROM Humains h
+JOIN Participants_Action p ON h.humain_id = p.humain_id
+JOIN Rapports_Incidence r ON p.action_id = r.action_id
+GROUP BY h.nom;
 
--- Attribution des droits pour le technicien
-GRANT SELECT, UPDATE (etat) ON Robots TO technicien;
+-- Vue pour les incidents par robot
+CREATE VIEW vue_incidents_par_robot AS
+SELECT r.nom, COUNT(*) AS nb_incidents
+FROM Robots r
+JOIN Participants_Action p ON r.robot_id = p.robot_id
+JOIN Rapports_Incidence ri ON p.action_id = ri.action_id
+GROUP BY r.nom;
 
--- Attribution des droits pour le superviseur éthique
-GRANT SELECT ON Actions TO superviseur_ethique;
-GRANT SELECT ON Rapports_Incidence TO superviseur_ethique;
+-- Vue pour les incidents par type d'action
+CREATE VIEW vue_incidents_par_action AS
+SELECT a.type_action, COUNT(*) AS nb_incidents
+FROM Actions a
+JOIN Rapports_Incidence ri ON a.action_id = ri.action_id
+GROUP BY a.type_action;
