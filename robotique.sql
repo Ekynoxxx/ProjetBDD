@@ -178,26 +178,32 @@ ORDER BY nb_incidents DESC;
 SHOW PROFILES;
 
 -- Actions menant au plus de rapports
+SET profiling=1;
 SELECT a.type_action, COUNT(*) AS nb_incidents
 FROM Actions a
 JOIN Rapports_Incidence ri ON a.action_id = ri.action_id
 GROUP BY a.type_action
 ORDER BY nb_incidents DESC;
+SHOW PROFILES;
 
 -- Robots impliqués dans un incident qui ont disparu
+SET profiling=1;
 SELECT r.nom, r.etat
 FROM Robots r
 JOIN Participants_Action p ON r.robot_id = p.robot_id
 JOIN Rapports_Incidence ri ON p.action_id = ri.action_id
 WHERE r.etat = 'disparu';
+SHOW PROFILES;
 
 -- Impact des lois violées sur la sécurité de la colonie
+SET profiling=1;
 SELECT type_loi_violee, COUNT(*) AS nombre_violations,
-       AVG(DATEDIFF(MINUTE, a.date_debut, a.date_fin)) AS duree_moyenne_action
+       AVG(TIMESTAMPDIFF(MINUTE, a.date_debut, a.date_fin)) AS duree_moyenne_action
 FROM Rapports_Incidence ri
 JOIN Actions a ON ri.action_id = a.action_id
 GROUP BY type_loi_violee
 ORDER BY nombre_violations DESC;
+SHOW PROFILES;
 
 -- Création d'index dans un premier temps
 CREATE INDEX idx_participants_action_humain_id ON Participants_Action(humain_id);
@@ -230,3 +236,24 @@ SELECT a.type_action, COUNT(*) AS nb_incidents
 FROM Actions a
 JOIN Rapports_Incidence ri ON a.action_id = ri.action_id
 GROUP BY a.type_action;
+
+-- Humains impliqués dans les rapports d'incidents (optimisée)
+SET profiling=1;
+SELECT * FROM vue_incidents_par_humain
+ORDER BY nb_incidents DESC;
+SHOW PROFILES;
+
+-- Robots impliqués dans les rapports d'incidents (optimisée)
+SELECT * FROM vue_incidents_par_robot
+ORDER BY nb_incidents DESC;
+
+-- Actions menant au plus de rapports (optimisée)
+SELECT * FROM vue_incidents_par_action
+ORDER BY nb_incidents DESC;
+
+-- Robots impliqués dans un incident qui ont disparu (optimisée)
+SELECT r.nom, r.etat
+FROM Robots r
+JOIN Participants_Action p ON r.robot_id = p.robot_id
+JOIN Rapports_Incidence ri ON p.action_id = ri.action_id
+WHERE r.etat = 'disparu';
