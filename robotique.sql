@@ -135,28 +135,43 @@ INSERT INTO Rapports_Incidence (rapport_id, type_loi_violee, description, action
 (19, 'Troisième loi', 'Un robot s''est désactivé face à un danger, laissant une tâche critique inachevée.', 19),
 (20, 'Première loi', 'Un robot a causé un préjudice psychologique à un humain en révélant des informations sensibles.', 20);
 
---Humain impliqué dans les rapports d'incidents
+-- Humains impliqués dans les rapports d'incidents
 SELECT h.nom, COUNT(*) AS nb_incidents
-FROM Humain h
-JOIN Participation p ON h.id_humain = p.id_humain
-JOIN Rapport_incidence r ON p.id_action = r.id_action
+FROM Humains h
+JOIN Participants_Action p ON h.humain_id = p.humain_id
+JOIN Rapports_Incidence r ON p.action_id = r.action_id
 GROUP BY h.nom
 ORDER BY nb_incidents DESC;
 
---Robots impliqué dans les rapports d'incidents
+-- Robots impliqués dans les rapports d'incidents
 SELECT r.nom, COUNT(*) AS nb_incidents
-FROM Robot r
-JOIN Participation p ON r.id_robot = p.id_robot
-JOIN Rapport_incidence ri ON p.id_action = ri.id_action
+FROM Robots r
+JOIN Participants_Action p ON r.robot_id = p.robot_id
+JOIN Rapports_Incidence ri ON p.action_id = ri.action_id
 GROUP BY r.nom
 ORDER BY nb_incidents DESC;
 
--- Action menant au plus de rapports
-SELECT a.description, COUNT(*) AS nb_incidents
-FROM Action a
-JOIN Rapport_incidence ri ON a.id_action = ri.id_action
-GROUP BY a.description
+-- Actions menant au plus de rapports
+SELECT a.type_action, COUNT(*) AS nb_incidents
+FROM Actions a
+JOIN Rapports_Incidence ri ON a.action_id = ri.action_id
+GROUP BY a.type_action
 ORDER BY nb_incidents DESC;
+
+-- Robots impliqués dans un incident qui ont disparu
+SELECT r.nom, r.etat
+FROM Robots r
+JOIN Participants_Action p ON r.robot_id = p.robot_id
+JOIN Rapports_Incidence ri ON p.action_id = ri.action_id
+WHERE r.etat = 'disparu';
+
+-- Impact des lois violées sur la sécurité de la colonie
+SELECT type_loi_violee, COUNT(*) AS nombre_violations,
+       AVG(DATEDIFF(MINUTE, a.date_debut, a.date_fin)) AS duree_moyenne_action
+FROM Rapports_Incidence ri
+JOIN Actions a ON ri.action_id = a.action_id
+GROUP BY type_loi_violee
+ORDER BY nombre_violations DESC;
 
 -- Création des rôles
 CREATE USER administrateur;
@@ -168,7 +183,10 @@ CREATE USER superviseur_ethique;
 GRANT ALL PRIVILEGES ON robotique TO administrateur;
 
 -- Attribution des droits pour l'analyste
-GRANT SELECT ON vues_analytiques TO analyste;
+GRANT SELECT ON Robots TO analyste;
+GRANT SELECT ON Humains TO analyste;
+GRANT SELECT ON Actions TO analyste;
+GRANT SELECT ON Rapports_Incidence TO analyste;
 
 -- Attribution des droits pour le technicien
 GRANT SELECT, UPDATE (etat) ON Robots TO technicien;
@@ -176,10 +194,3 @@ GRANT SELECT, UPDATE (etat) ON Robots TO technicien;
 -- Attribution des droits pour le superviseur éthique
 GRANT SELECT ON Actions TO superviseur_ethique;
 GRANT SELECT ON Rapports_Incidence TO superviseur_ethique;
-
--- Création d'index sur les colonnes fréquemment utilisées
-CREATE INDEX idx_action_id ON Participants_Action(action_id);
-CREATE INDEX idx_robot_id ON Participants_Action(robot_id);
-CREATE INDEX idx_humain_id ON Participants_Action(humain_id);
-CREATE INDEX idx_type_loi_violee ON Rapports_Incidence(type_loi_violee);
-CREATE INDEX idx_etat ON Robots(etat);
