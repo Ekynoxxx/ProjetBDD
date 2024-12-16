@@ -205,12 +205,31 @@ GROUP BY type_loi_violee
 ORDER BY nombre_violations DESC;
 SHOW PROFILES;
 
+-- Humains et robots  travaillant le plus souvent ensemble
+SET profiling=1;
+SELECT 
+    h.nom AS nom_humain,
+    r.nom AS nom_robot,
+    COUNT(*) AS nb_collaborations
+FROM Participants_Action ph
+JOIN Participants_Action pr ON ph.action_id = pr.action_id
+JOIN Humains h ON ph.humain_id = h.humain_id
+JOIN Robots r ON pr.robot_id = r.robot_id
+WHERE ph.humain_id IS NOT NULL AND pr.robot_id IS NOT NULL
+GROUP BY h.nom, r.nom
+ORDER BY nb_collaborations DESC
+LIMIT 10;
+SHOW PROFILES;
+
+
 -- Création d'index dans un premier temps
 CREATE INDEX idx_participants_action_humain_id ON Participants_Action(humain_id);
 CREATE INDEX idx_participants_action_robot_id ON Participants_Action(robot_id);
 CREATE INDEX idx_participants_action_action_id ON Participants_Action(action_id);
 CREATE INDEX idx_rapports_incidence_action_id ON Rapports_Incidence(action_id);
 CREATE INDEX idx_robots_etat ON Robots(etat);
+CREATE INDEX idx_rapports_incidence_type_loi ON Rapports_Incidence(type_loi_violee);
+
 
 -- Création de vue dans un deuxième premier temps
 
@@ -220,7 +239,8 @@ SELECT h.nom, COUNT(*) AS nb_incidents
 FROM Humains h
 JOIN Participants_Action p ON h.humain_id = p.humain_id
 JOIN Rapports_Incidence r ON p.action_id = r.action_id
-GROUP BY h.nom;
+GROUP BY h.nom
+ORDER BY nb_incidents DESC;
 
 -- Vue pour les incidents par robot
 CREATE VIEW vue_incidents_par_robot AS
@@ -228,14 +248,16 @@ SELECT r.nom, COUNT(*) AS nb_incidents
 FROM Robots r
 JOIN Participants_Action p ON r.robot_id = p.robot_id
 JOIN Rapports_Incidence ri ON p.action_id = ri.action_id
-GROUP BY r.nom;
+GROUP BY r.nom
+ORDER BY nb_incidents DESC;
 
 -- Vue pour les incidents par type d'action
 CREATE VIEW vue_incidents_par_action AS
 SELECT a.type_action, COUNT(*) AS nb_incidents
 FROM Actions a
 JOIN Rapports_Incidence ri ON a.action_id = ri.action_id
-GROUP BY a.type_action;
+GROUP BY a.type_action
+ORDER BY nb_incidents DESC;
 
 -- Humains impliqués dans les rapports d'incidents (optimisée)
 SET profiling=1;
@@ -257,3 +279,11 @@ FROM Robots r
 JOIN Participants_Action p ON r.robot_id = p.robot_id
 JOIN Rapports_Incidence ri ON p.action_id = ri.action_id
 WHERE r.etat = 'disparu';
+
+-- Analyse de l'impact des lois violées (optimisée)
+SELECT type_loi_violee, COUNT(*) AS nombre_violations,
+AVG(TIMESTAMPDIFF(MINUTE, a.date_debut, a.date_fin)) AS duree_moyenne_action
+FROM Rapports_Incidence ri
+JOIN Actions a ON ri.action_id = a.action_id
+GROUP BY type_loi_violee
+ORDER BY nombre_violations DESC;
