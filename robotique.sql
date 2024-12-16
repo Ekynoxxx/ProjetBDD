@@ -221,16 +221,16 @@ ORDER BY nb_collaborations DESC
 LIMIT 10;
 SHOW PROFILES;
 
-
 -- Création d'index dans un premier temps
 CREATE INDEX idx_participants_action_humain_id ON Participants_Action(humain_id);
 CREATE INDEX idx_participants_action_robot_id ON Participants_Action(robot_id);
 CREATE INDEX idx_participants_action_action_id ON Participants_Action(action_id);
 CREATE INDEX idx_rapports_incidence_action_id ON Rapports_Incidence(action_id);
 CREATE INDEX idx_robots_etat ON Robots(etat);
-CREATE INDEX idx_rapports_incidence_type_loi ON Rapports_Incidence(type_loi_violee);
 CREATE INDEX idx_humains_nom ON Humains(nom);
 CREATE INDEX idx_robots_nom ON Robots(nom);
+CREATE INDEX idx_rapports_incidence_type_loi ON Rapports_Incidence(type_loi_violee);
+CREATE INDEX idx_actions_dates ON Actions(date_debut, date_fin);
 
 -- Création de vue dans un deuxième premier temps
 
@@ -261,7 +261,7 @@ GROUP BY a.type_action
 ORDER BY nb_incidents DESC;
 
 -- Vue pour les collaborations fréquentes
-CREATE VIEW vue_collaborations_frequentes AS
+CREATE OR REPLACE VIEW vue_collaborations_frequentes AS
 SELECT 
     h.nom AS nom_humain,
     r.nom AS nom_robot,
@@ -273,6 +273,7 @@ JOIN Robots r ON pr.robot_id = r.robot_id
 WHERE ph.humain_id IS NOT NULL AND pr.robot_id IS NOT NULL
 GROUP BY h.nom, r.nom
 ORDER BY nb_collaborations DESC;
+
 
 -- Humains impliqués dans les rapports d'incidents (optimisée)
 SET profiling=1;
@@ -302,3 +303,10 @@ FROM Rapports_Incidence ri
 JOIN Actions a ON ri.action_id = a.action_id
 GROUP BY type_loi_violee
 ORDER BY nombre_violations DESC;
+
+-- Collaboration entre robot et humain (optimisée)
+SET profiling = 1;
+SELECT nom_humain, nom_robot, nb_collaborations
+FROM vue_collaborations_frequentes
+LIMIT 10;
+SHOW PROFILES;
